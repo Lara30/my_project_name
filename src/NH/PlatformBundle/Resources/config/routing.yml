@@ -1,0 +1,9 @@
+#hello_the_world = le nom de la route / path=url / defaults = paramètres de la route
+hello_the_world:
+    path:    /hello-world
+    defaults: { _controller: NHPlatformBundle:Advert:index }
+
+
+page2:
+    path:     /page2
+    defaults: { _controller: NHPlatformBundle:Advert:secondepage}

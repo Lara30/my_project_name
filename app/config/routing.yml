@@ -1,0 +1,3 @@
+nh_platform:
+    resource: "@NHPlatformBundle/Resources/config/routing.yml"
+    prefix:   /
