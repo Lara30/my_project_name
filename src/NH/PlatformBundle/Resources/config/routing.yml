@@ -3,20 +3,53 @@
 #le nom de la route
 nh_platform_home:
 #une entrée (ligne path) : URL à capturer
-    path:    /
+                        #on rajoute le param page pour avoir une url plus propre
+    path:    /{page}
 #    une sortie (ligne defaults) : paramètres de la route qui dit quel contrôleur appeler
-    defaults: {
-        _controller: NHPlatformBundle:Advert:index }
+    defaults:
+        _controller: NHPlatformBundle:Advert:index
+        page:    1
+    requirements:
+        page: \d*
+
+
 #le routeur est donc à partir d'une URL, de trouver la route correspondante et de retourner les param de sortie
+nh_platform_test:
+    path:    /advert/{id}
+    defaults:
+        _controller: NHPlatformBundle:Advert:test
+    requirements:
+        id: \d+
+
 
 nh_platform_affichage:
-    path:    /platform/advert/{id}
+    path:    /advert/{id}
     defaults:
         _controller: NHPlatformBundle:Advert:affichage
+    requirements:
+        id: \d+
 
+nh_platform_add:
+    path:    /add
+    defaults:
+        _controller: NHPlatformBundle:Advert:add
+
+nh_platform_edit:
+    path:    /edit/{id}
+    defaults:
+        _controller: NHPlatformBundle:Advert:edit
+    requirements:
+        id: \d+
+
+nh_platform_delete:
+    path:    /delete/{id}
+    defaults:
+        _controller: NHPlatformBundle:Avdert:delete
+    requirements:
+        id: \d+
 
 nh_platform_affichage_params:
-    path:    /platform/{year}/{params}.{format}
+    path:    /{year}/{params}.{format}
     #le tableau defaults correspond aux valeurs par défaut de nos params
     defaults:
         _controller: NHPlatformBundle:Advert:affichageParams
@@ -29,10 +62,10 @@ nh_platform_affichage_params:
         format: html|xml
 
 
-page2:
+nh_platform_page2:
     path:     /page2
-    defaults: {
+    defaults:
         _controller: NHPlatformBundle:Advert:secondepage
-        }
+
 #chaque route fait la correspondance entre une URL et un jeu de paramètres
 #le paramètre qui nous intéresse est _controlle/avertr = le contrôleur à exécuter
