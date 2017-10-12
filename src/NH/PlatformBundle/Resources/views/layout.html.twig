@@ -1,0 +1,35 @@
+{# src/NH/PlatformBundle/Resources/views/layout.html.twig #}
+{% extends "::layout.html.twig" %}
+
+{% block title %}
+    Annonces - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {#définition d'un sous-titre commun à toutes les pages du bundle#}
+    <h1>Essais</h1>
+    <hr>
+    {#nouveau bloc que les vues du bundle vont remplir#}
+    {% block nhplatform_body %}
+    {% endblock %}
+
+    {% endblock %}
+{#
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{%  block title %}NH Plateforme{% endblock %}</title>
+</head>
+<body>
+<div id="menu">
+    {{ render(controller("NHPlatformBundle:Advert:menu")) }}
+</div>
+
+{% block body %}
+{% endblock %}
+
+</body>
+</html>
+#}
+{#voici ce à quoi doit ressembler un template père = LAYOUT#}

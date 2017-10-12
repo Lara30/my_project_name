@@ -14,12 +14,17 @@ nh_platform_home:
 
 
 #le routeur est donc à partir d'une URL, de trouver la route correspondante et de retourner les param de sortie
-nh_platform_test:
+#nh_platform_test:
+#    path:    /advert/{id}
+#    defaults:
+#        _controller: NHPlatformBundle:Advert:test
+#    requirements:
+#        id: \d+
+
+nh_platform-view:
     path:    /advert/{id}
     defaults:
-        _controller: NHPlatformBundle:Advert:test
-    requirements:
-        id: \d+
+        _controller: NHPlatformBundle:Advert:view
 
 
 nh_platform_affichage:
@@ -48,6 +53,7 @@ nh_platform_delete:
     requirements:
         id: \d+
 
+
 nh_platform_affichage_params:
     path:    /{year}/{params}.{format}
     #le tableau defaults correspond aux valeurs par défaut de nos params
@@ -60,7 +66,6 @@ nh_platform_affichage_params:
         year:    \d{4}
         #pareil pour html/xml, le .rss ne sera pas interceptée
         format: html|xml
-
 
 nh_platform_page2:
     path:     /page2

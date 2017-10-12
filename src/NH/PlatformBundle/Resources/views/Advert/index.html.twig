@@ -1,14 +1,47 @@
+{# src/OC/PlatformBundle/Resources/views/Advert/index.html.twig #}
+
+{%  extends "NHPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+    Accueil - {{ parent() }}
+{% endblock %}
+
+{% block nhplatform_body %}
+
+<h2>Liste des annonces</h2>
+    <ul>
+        {#1ère bucle sur la variable listAdverts#}
+        {% for advert in listAdverts %}
+        <li>
+            <a href="{{ path('nh_platform_affichage', {'id': advert.id}) }}">
+                {{ advert.title }}
+            </a>
+            par {{ advert.author }},
+            le {{ advert.date|date('d/m/Y') }}
+        </li>
+        {% else %}
+        <li>Pas d'annonces..... pour le moment! </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+
+{#TEMPLATE FILS#}
+
+{#
 <DOCTYPE html>
     <html>
     <head>
         <title>Bienvenue sur ma 1ère page avec Symfony</title>
     </head>
+
     <body>
     <h1>Hello World!</h1>
 
     <p>
         Réalisation d'une tâche simple!
     </p>
-    <h1>Hello {{ nom }} !</h1>
+    <h1>Hello!</h1>
     </body>
-    </html>
+    </html>#}
+
