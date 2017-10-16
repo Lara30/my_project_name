@@ -26,7 +26,6 @@ nh_platform-view:
     defaults:
         _controller: NHPlatformBundle:Advert:view
 
-
 nh_platform_affichage:
     path:    /advert/{id}
     defaults:
@@ -49,7 +48,7 @@ nh_platform_edit:
 nh_platform_delete:
     path:    /delete/{id}
     defaults:
-        _controller: NHPlatformBundle:Avdert:delete
+        _controller: NHPlatformBundle:Advert:delete
     requirements:
         id: \d+
 

@@ -52,7 +52,7 @@ class AdvertController extends Controller
                    'date'    => new \Datetime())
            )));
    }
-
+//on appelle chaque fonction par le nom de son fichier
    public function viewAction($id)
    {
        $advert = array(
@@ -75,7 +75,7 @@ class AdvertController extends Controller
             //Ici on s'occupe de la CREATION et GESTION du formulaire
             $request->getSession()->getFlashBag()->add('notice', 'annonce enregistrée.');
             //on redirige ver sla page de visualisation de l'annonce
-            return $this->redirectToRoute('nh_platform_view', array('id' => 6));
+            return $this->redirectToRoute('nh_platform_affichage', array('id' => 6));
         }
         //si on n''est pas en POST = on affiche le formulaire
         return $this->render('NHPlatformBundle:Advert:add.html.twig');
@@ -83,12 +83,19 @@ class AdvertController extends Controller
 
     public function editAction($id, Request $request)
     {
-        if ($request->isMethod('POST')) {
-
-            $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée.');
-            return $this->redirectToRoute('nh_platform_view', array('id' => 3));
-        }
-        return $this->render('NHPlatformBundle:Advert:edit.html.twig');
+//        if ($request->isMethod('POST')) {
+            $advert = array(
+                'title' => 'rech dev symfony',
+                'id' => $id,
+                'author' => 'Alex',
+                'content' => 'Nous recherchons un dev symfony débutant',
+                'date' => new \Datetime()
+            );
+//            $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée.');
+//            return $this->redirectToRoute('nh_platform_view', array('id' => 3));
+        return $this->render('NHPlatformBundle:Advert:edit.html.twig', array(
+            'advert' => $advert
+        ));
     }
 
     public function deleteAction($id)
@@ -135,9 +142,8 @@ class AdvertController extends Controller
         //la méthode redirectToRoute prend directement en argument la route vers laquelle rediriger et non l'url
     }
 
-    public function affichageAction($id, Request $request)
-    {*/
-        /*  {
+   public function affichageAction($id, Request $request)
+    { {
               //on veut avoir l'URL de l'annonce d'id 5
               $url = $this->get('router')->generate(
                   'nh_platform_affichage',//1er argument : le nom de la route
@@ -145,7 +151,7 @@ class AdvertController extends Controller
               );
               return new Response("l'url de l'annonce d'id 5 est : ".$url);
           }*/
-        //$url vaut "/platform/advert/5"
+        //$url vaut "/platform/advert/5"*/
 
 //récupération et affichage de l'id dans l'url
 //on injecte la requête dans les arguments de la méthode

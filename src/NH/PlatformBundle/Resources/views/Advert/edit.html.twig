@@ -1,0 +1,21 @@
+{# src/NH/PlatformBundle/Resources/views/Advert/edit.html.twig#}
+
+{% extends "NHPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+Modifier l'annonce - {{ parent() }}
+{% endblock %}
+
+{% block nhplatform_body %}
+<h2>Modifier une annonce</h2>
+{{ include("NHPlatformBundle:Advert:form.html.twig") }}
+<p>annonce déjà existante</p>
+
+<p>
+    <a href="{{ path('nh_platform_affichage', {'id':advert.id}) }}" class="btn btn-default">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Retour à l'annonce
+    </a>
+</p>
+
+{% endblock %}

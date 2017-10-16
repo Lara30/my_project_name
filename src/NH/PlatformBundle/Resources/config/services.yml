@@ -1,3 +1,5 @@
+# src/NH/PlatformBundle/Resources/config/services.yml
+
 services:
 #    nh_platform.example:
 #        class: NH\PlatformBundle\Example
