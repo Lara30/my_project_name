@@ -8,9 +8,9 @@
 
 {% block nhplatform_body %}
 
-<h2>Liste des annonces</h2>
+<h2>INDEX / Boucle sur la variable LISTADVERTS</h2>
     <ul>
-        {#1ère bucle sur la variable listAdverts#}
+        {#1ère boucle sur la variable listAdverts#}
         {% for advert in listAdverts %}
         <li>
             <a href="{{ path('nh_platform_affichage', {'id': advert.id}) }}">
