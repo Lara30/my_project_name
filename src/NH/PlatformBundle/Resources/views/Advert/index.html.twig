@@ -13,7 +13,7 @@
         {#1ère boucle sur la variable listAdverts#}
         {% for advert in listAdverts %}
         <li>
-            <a href="{{ path('nh_platform_affichage', {'id': advert.id}) }}">
+            <a href="{{ path('nh_platform_view', {'id': advert.id}) }}">
                 {{ advert.title }}
             </a>
             par {{ advert.author }},

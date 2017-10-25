@@ -1,4 +1,5 @@
-#hello_the_world = le nom de la route / path=url / defaults = paramètres de la route
+#hello_the_world = le nom de la route /
+#path=url / defaults = paramètres de la route
 
 #le nom de la route
 nh_platform_home:
@@ -12,26 +13,18 @@ nh_platform_home:
     requirements:
         page: \d*
 
-
 #le routeur est donc à partir d'une URL, de trouver la route correspondante et de retourner les param de sortie
-#nh_platform_test:
-#    path:    /advert/{id}
-#    defaults:
-#        _controller: NHPlatformBundle:Advert:test
-#    requirements:
-#        id: \d+
-
-nh_platform-view:
-    path:    /advert/{id}
+nh_platform_view:
+    path:    /advert/view/{id}
     defaults:
         _controller: NHPlatformBundle:Advert:view
 
-nh_platform_affichage:
-    path:    /advert/{id}
-    defaults:
-        _controller: NHPlatformBundle:Advert:affichage
-    requirements:
-        id: \d+
+#nh_platform_affichage:
+#    path:    /advert/{id}
+#    defaults:
+#        _controller: NHPlatformBundle:Advert:affichage
+#    requirements:
+#        id: \d+
 
 nh_platform_add:
     path:    /add
@@ -53,18 +46,18 @@ nh_platform_delete:
         id: \d+
 
 
-nh_platform_affichage_params:
-    path:    /{year}/{params}.{format}
-    #le tableau defaults correspond aux valeurs par défaut de nos params
-    defaults:
-        _controller: NHPlatformBundle:Advert:affichageParams
-        format:    html
-#        on déclare là les requirements pour déterminer les contraintes que doivent respecter les params
-    requirements:
-#    d{4} = 4 chiffres à la suite
-        year:    \d{4}
-        #pareil pour html/xml, le .rss ne sera pas interceptée
-        format: html|xml
+#nh_platform_affichage_params:
+#    path:    /{year}/{params}.{format}
+#    #le tableau defaults correspond aux valeurs par défaut de nos params
+#    defaults:
+#        _controller: NHPlatformBundle:Advert:affichageParams
+#        format:    html
+##        on déclare là les requirements pour déterminer les contraintes que doivent respecter les params
+#    requirements:
+##    d{4} = 4 chiffres à la suite
+#        year:    \d{4}
+#        #pareil pour html/xml, le .rss ne sera pas interceptée
+#        format: html|xml
 
 nh_platform_page2:
     path:     /page2
