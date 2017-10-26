@@ -4,6 +4,8 @@
 namespace NH\PlatformBundle\Controller;
 
 use NH\PlatformBundle\Entity\Advert;
+use NH\PlatformBundle\Entity\Image;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +24,8 @@ class AdvertController extends Controller
     }*/
 
     public function indexAction($page)
-    {//comme on ne sait pas combien il y a de pages
+    {
+        //comme on ne sait pas combien il y a de pages
         if ($page < 0) {
             //on déclenche une exception qui va afficher une page d'erreur
             throw new NotFoundHttpException('Page"' . $page . '" inexistante.');
@@ -54,6 +57,43 @@ class AdvertController extends Controller
             )));
     }
 
+    public function addAction(Request $request)
+    {
+        //création de l'entité
+        $advert = new Advert();
+
+        //on renseigne ses attributs
+        $advert->setTitre('recherche dev symfony');
+        $advert->setAuthor('Alex');
+        $advert->setContent("un dev symfony debutant");
+        $advert->setDate(new \Datetime());
+
+        //création de l'entité image
+        $image = new Image();
+        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+        $image->setAlt('job de reve');
+        //on lie l'image à l'annonce
+        $advert->setImage($image);
+        //on ne peut pas définir ni la date ni la publication
+        //car ces attributs sont définis automatiquement dans le constructeur
+
+        // on récupère l'entitymanager
+        $em = $this->getDoctrine()->getManager();
+        //on persite l'entité
+        $em->persist($advert);
+        //on déclenche l'enregistrement
+        $em->flush();
+
+        //si la requête est en POST c'est que le visiteur a soumis le formulaire
+        if ($request->isMethod('POST')) {
+            //Ici on s'occupe de la CREATION et GESTION du formulaire
+            $request->getSession()->getFlashBag()->add('notice', 'annonce enregistrée.');
+            //on redirige ver sla page de visualisation de l'annonce
+            return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
+        }
+        //si on n''est pas en POST = on affiche le formulaire
+        return $this->render('NHPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
+    }
 //on appelle chaque fonction par le nom de son fichier
     public function viewAction($id)
     {
@@ -72,7 +112,7 @@ class AdvertController extends Controller
               'title' => 'recherche dév Symfony2',
               'id' => $id,
               'author' => 'Alexandre',
-              'content' => 'Nous recherchons un dev Symfony debutant....',
+              'content' => 'Nous recherchons un dev Symfony debutantttttt....',
               'date' => new \DateTime()
           );*/
 
@@ -81,38 +121,6 @@ class AdvertController extends Controller
             'advert' => $advert
         ));
     }
-
-    public function addAction(Request $request)
-    {
-        //création de l'entité
-        $advert = new Advert();
-        //on renseigne ses attributs
-        $advert->setTitre('rech dev symfony');
-        $advert->setAuthor('Alexandre');
-        $advert->setContent("nous rech un dev symfony debutant");
-        $advert->setDate(new \Datetime());
-
-        //on ne peut pas définir ni la date ni la publication
-        //car ces attributs sont définis automatiquement dans le constructeur
-
-        // on récupère l'entitymanager
-        $em = $this->getDoctrine()->getManager();
-        //on persite l'entité
-        $em->persist($advert);
-        //on flush tout ce qui a été persisté avant
-        $em->flush();
-
-        //si la requête est en POST c'est que le visiteur a soumis le formulaire
-        if ($request->isMethod('POST')) {
-            //Ici on s'occupe de la CREATION et GESTION du formulaire
-            $request->getSession()->getFlashBag()->add('notice', 'annonce enregistrée.');
-            //on redirige ver sla page de visualisation de l'annonce
-            return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
-        }
-        //si on n''est pas en POST = on affiche le formulaire
-        return $this->render('NHPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
-    }
-
     public function editAction($id, Request $request)
     {
 //        if ($request->isMethod('POST')) {
@@ -120,9 +128,9 @@ class AdvertController extends Controller
             'title' => 'rech dev symfony',
             'id' => $id,
             'author' => 'Alex',
-            'content' => 'Nous recherchons un dev symfony débutant',
-            'date' => new \Datetime()
-        );
+            'content' => 'Nous recherchons un dev symfony',
+            'date' => new \Datetime(),
+            );
 //            $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée.');
 //            return $this->redirectToRoute('nh_platform_view', array('id' => 3));
         return $this->render('NHPlatformBundle:Advert:edit.html.twig', array(
@@ -139,9 +147,9 @@ class AdvertController extends Controller
     {
         //on fixe une liste ici pour la récupérer depuis la BDD
         $listAdverts = array(
-            array('id' => 1, 'title' => 'Test1'),
-            array('id' => 2, 'title' => 'Test2'),
-            array('id' => 3, 'title' => 'Test3'),
+            array('id' => 9, 'title' => 'Test1'),
+            array('id' => 10, 'title' => 'Test2'),
+            array('id' => 11, 'title' => 'Test3'),
         );
         return $this->render('NHPlatformBundle:Advert:menu.html.twig', array(
             //le contrôleur passe ici les variables nécessaires au TEMPLATE

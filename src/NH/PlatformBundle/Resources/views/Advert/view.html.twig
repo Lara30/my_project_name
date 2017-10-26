@@ -7,14 +7,19 @@
 {% endblock %}
 
 {% block nhplatform_body %}
+    {#on vérifie qu"une image soit bien associée à l'annonce#}
+
+    {% if advert.image is not null %}
+
+        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+    {% endif %}
 
 <h2>{{ advert.titre }}</h2>
 <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
-<div class="well">
+        <div class="well">
     {{ advert.content }}
-</div>
-
+        </div>
 <p>
     <a href="{{ path('nh_platform_home') }}" class="btn btn-default">
         <i class="glyphicon glyphicon-chevron-left"></i>

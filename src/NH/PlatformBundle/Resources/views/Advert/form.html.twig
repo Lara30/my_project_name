@@ -3,11 +3,13 @@
 {# vue qui n'hérite de personne, juste incluse par d'autres vues qui hériteront
 du layout#}
 
-<h3>nouvelle annonce : </h3>
+<h3>Formulaire rentré dans le fichier form.html.twig : </h3>
 
 <div class="well">
-    <p>titre : </p>
-    <p>author : </p>
-    <p>content : </p>
-    <p>date : </p>
+    <p>on laisse vide la vue on la comblera avec le formulaire créé
+    on est dans la vue form.html.twig</p>
+
+    <form action="{{ path('nh_platform_add') }}" type="post">
+        <input type="submit">
+    </form>
 </div>

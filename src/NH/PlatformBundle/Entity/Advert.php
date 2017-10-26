@@ -1,5 +1,5 @@
 <?php
-
+// src/NH/PlatformBundle/Entity/Advert.php
 namespace NH\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="advert")
  * @ORM\Entity(repositoryClass="NH\PlatformBundle\Repository\AdvertRepository")
  */
+
 class Advert
 {
     /**
@@ -20,6 +21,14 @@ class Advert
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+
+    //l'entité advert est propriétaire de la relation
+    /**
+     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $image;
 
     /**
      * @var string
@@ -45,7 +54,7 @@ class Advert
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime", )
+     * @ORM\Column(name="date", type="datetime")
      */
     private $date;
 
@@ -54,89 +63,22 @@ class Advert
     /**
      * @ORM\Column(name="published", type="boolean")
      */
-    private $published = true;
-
 
     /**
      * Get id
      *
      * @return int
      */
+
+    /**
+     * @ORM\Column(name="published", type="boolean")
+     * @return int
+     */
+    private $published = true;
+
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set titre
-     *
-     * @param string $titre
-     *
-     * @return Advert
-     */
-    public function setTitre($titre)
-    {
-        $this->titre = $titre;
-
-        return $this;
-    }
-
-    /**
-     * Get titre
-     *
-     * @return string
-     */
-    public function getTitre()
-    {
-        return $this->titre;
-    }
-
-    /**
-     * Set author
-     *
-     * @param string $author
-     *
-     * @return Advert
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    /**
-     * Get author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
-    /**
-     * Set content
-     *
-     * @param string $content
-     *
-     * @return Advert
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * Get content
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
     }
 
     /**
@@ -160,9 +102,69 @@ class Advert
         return $this->date;
     }
 
-    public function _construct2()
-    {$this->date = new \Datetime();
-        $this->published = true;
+    /**
+     * Set titre
+     *
+     * @param string $titre
+     * @return Advert
+     */
+    public function setTitre($titre)
+    {
+        $this->titre = $titre;
+        return $this;
+    }
+
+    /**
+     * Get titre
+     *
+     * @return string
+     */
+    public function getTitre()
+    {
+        return $this->titre;
+    }
+
+    /**
+     * Set author
+     *
+     * @param string $author
+     * @return Advert
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set content
+     *
+     * @param string $content
+     * @return Advert
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+        return $this;
+    }
+
+    /**
+     * Get content
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 
     /**
@@ -185,4 +187,28 @@ class Advert
     {
         return $this->published;
     }
+
+    /**set image
+     *
+     * @param Image|null $image
+     * @return Advert
+     *
+     */
+    public function setImage(Image $image = null)
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return \NH\PlatformBundle\Entity\Image
+     */
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
 }
