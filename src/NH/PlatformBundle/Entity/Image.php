@@ -1,5 +1,4 @@
 <?php
-
 // src/NH/PlatformBundle/Entity/Image
 
 namespace NH\PlatformBundle\Entity;

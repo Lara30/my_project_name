@@ -2,6 +2,7 @@
 // src/NH/PlatformBundle/Entity/Advert.php
 namespace NH\PlatformBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,26 +14,24 @@ use Doctrine\ORM\Mapping as ORM;
 
 class Advert
 {
-    /**
-     * @var int
-     *
+     /**
+      * @var int
+      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
-
-    //l'entité advert est propriétaire de la relation
     /**
-     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
      */
-    private $image;
+    private $date;
 
     /**
      * @var string
-     *
      * @ORM\Column(name="titre", type="string", length=255)
      */
     private $titre;
@@ -52,30 +51,43 @@ class Advert
     private $content;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date", type="datetime")
-     */
-    private $date;
-
-
-    //test selon le tuto
-    /**
      * @ORM\Column(name="published", type="boolean")
-     */
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-
-    /**
-     * @ORM\Column(name="published", type="boolean")
-     * @return int
      */
     private $published = true;
 
+    //l'entité advert est propriétaire de la relation
+    /**
+     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @ORM\JoinColumn
+     */
+    private $image;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="NH\PlatformBundle\Entity\Category", cascade={"persist"})
+     * @ORM\JoinTable(name="nh_advert_category")
+     */
+    private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity="NH\PlatformBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications;
+
+    //comme la propriété $categories doit être un arraycollection,
+    //on doit la définir dans un constructeur :
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->categories   = new ArrayCollection();
+        $this->applications = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
@@ -90,7 +102,7 @@ class Advert
     public function setDate($date)
     {
         $this->date = $date;
-        return $this;
+//        return $this;
     }
 
     /**
@@ -111,7 +123,7 @@ class Advert
     public function setTitre($titre)
     {
         $this->titre = $titre;
-        return $this;
+//        return $this;
     }
 
     /**
@@ -123,7 +135,6 @@ class Advert
     {
         return $this->titre;
     }
-
     /**
      * Set author
      *
@@ -133,7 +144,7 @@ class Advert
     public function setAuthor($author)
     {
         $this->author = $author;
-        return $this;
+//        return $this;
     }
 
     /**
@@ -145,7 +156,6 @@ class Advert
     {
         return $this->author;
     }
-
     /**
      * Set content
      *
@@ -155,7 +165,7 @@ class Advert
     public function setContent($content)
     {
         $this->content = $content;
-        return $this;
+//        return $this;
     }
 
     /**
@@ -175,7 +185,6 @@ class Advert
     public function setPublished($published)
     {
         $this->published = $published;
-        return $this;
     }
 
     /**
@@ -192,17 +201,16 @@ class Advert
      *
      * @param Image|null $image
      * @return Advert
-     *
+
      */
     public function setImage(Image $image = null)
     {
         $this->image = $image;
-        return $this;
+//        return $this;
     }
 
     /**
      * Get image
-     *
      * @return \NH\PlatformBundle\Entity\Image
      */
 
@@ -211,4 +219,57 @@ class Advert
         return $this->image;
     }
 
+    /**
+     * Add category
+     * @param Category $category
+     * @return Advert
+     */
+    //on ajoute une seule Categorie à la fois
+    public function addCategory(Category $category)
+    {
+        $this->categories[] = $category;
+//        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param Category $category
+     */
+    public function removeCategory(Category $category)
+    {
+        //ici on utilise une méthode de l'arraycollection pour supprimer la catégorie en argument
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+    /**
+     * @param Application $application
+     */
+    public function addApplication(Application $application)
+    {
+        $this->applications[] = $application;
+        // On lie l'annonce à la candidature
+        $application->setAdvert($this);
+    }
+    /**
+     * @param Application $application
+     */
+    public function removeApplication(Application $application)
+    {
+        $this->applications->removeElement($application);
+    }
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getApplications()
+    {
+        return $this->applications;
+    }
 }

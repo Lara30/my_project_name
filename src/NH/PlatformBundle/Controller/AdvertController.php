@@ -4,6 +4,7 @@
 namespace NH\PlatformBundle\Controller;
 
 use NH\PlatformBundle\Entity\Advert;
+use NH\PlatformBundle\Entity\Application;
 use NH\PlatformBundle\Entity\Image;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,7 +18,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class AdvertController extends Controller
 {
-
    /* public function affichageAction($id)
     {
         return new JsonResponse(array('id' => $id));
@@ -59,7 +59,7 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
-        //création de l'entité
+        //création de l'entité Advert
         $advert = new Advert();
 
         //on renseigne ses attributs
@@ -67,33 +67,53 @@ class AdvertController extends Controller
         $advert->setAuthor('Alex');
         $advert->setContent("un dev symfony debutant");
         $advert->setDate(new \Datetime());
+        //on ne peut pas définir ni la date ni la publication
+        //car ces attributs sont définis automatiquement dans le constructeur
 
         //création de l'entité image
         $image = new Image();
         $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
         $image->setAlt('job de reve');
+
+        //Création d'une première candidature
+        $application1 = new Application();
+        $application1->setAuthor('Ninou');
+        $application1->setContent("j'ai toutes");
+
+        //Création d'une 2nde candidature
+        $application2 = new Application();
+        $application2->setAuthor('Sacha');
+        $application2->setContent("motivé motivé");
+
         //on lie l'image à l'annonce
         $advert->setImage($image);
-        //on ne peut pas définir ni la date ni la publication
-        //car ces attributs sont définis automatiquement dans le constructeur
+
+        //on lie les candidatures à l'annonce
+        $application1->setAdvert($advert);
+        $application2->setAdvert($advert);
 
         // on récupère l'entitymanager
         $em = $this->getDoctrine()->getManager();
         //on persite l'entité
         $em->persist($advert);
-        //on déclenche l'enregistrement
+        //on persiste tout à la main et non par cascade
+        $em->persist($application1);
+        $em->persist($application2);
+
+        //on déclenche l'enregistrement de tout ce qui a été persisté avant
         $em->flush();
 
         //si la requête est en POST c'est que le visiteur a soumis le formulaire
         if ($request->isMethod('POST')) {
             //Ici on s'occupe de la CREATION et GESTION du formulaire
             $request->getSession()->getFlashBag()->add('notice', 'annonce enregistrée.');
-            //on redirige ver sla page de visualisation de l'annonce
+            //on redirige vers la page de visualisation de l'annonce
             return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
         }
         //si on n''est pas en POST = on affiche le formulaire
         return $this->render('NHPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
     }
+
 //on appelle chaque fonction par le nom de son fichier
     public function viewAction($id)
     {
@@ -101,6 +121,7 @@ class AdvertController extends Controller
         $repository = $this->getDoctrine()
             ->getManager()
             ->getRepository('NHPlatformBundle:Advert');
+
         //on récupère l'entité correspondante à l'id $id
         $advert = $repository->find($id);
         //$advert est donc une instance de NH\PlatformBundle\Entity\Advert
@@ -108,6 +129,12 @@ class AdvertController extends Controller
         if (null === $advert) {
             throw new NotFoundHttpException("l'annonce d'id " . $id . "n'existe pas.");
         }
+
+        //on récupère la liste des candidatures de cette annonce
+        /*$listApplications = $repository
+            ->getRepository('NHPlatformBundle:Application')
+            ->findBy(array('advert' => $advert))
+            ;*/
         /*  $advert = array(
               'title' => 'recherche dév Symfony2',
               'id' => $id,
@@ -118,38 +145,60 @@ class AdvertController extends Controller
 
         //ici on récupère l'annonce qui correspond à l'id
         return $this->render('NHPlatformBundle:Advert:view.html.twig', array(
-            'advert' => $advert
+            'advert'           => $advert,
+//            'listApplications' => $listApplications
         ));
     }
+
+
     public function editAction($id, Request $request)
     {
-//        if ($request->isMethod('POST')) {
-        $advert = array(
+ /*       $em = $this->getDoctrine()->getManager();
+        // On récupère l'annonce $id
+        $advert = $em->getRepository('GCPlatformBundle:Advert')->find($id);
+        if (null === $advert) {
+            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+        }
+        // La méthode findAll retourne toutes les catégories de la base de données
+        $listCategories = $em->getRepository('GCPlatformBundle:Category')->findAll();
+        // On boucle sur les catégories pour les lier à l'annonce
+        foreach ($listCategories as $category) {
+            $advert->addCategory($category);
+        }
+        // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+        // Étape 2 : On déclenche l'enregistrement
+        $em->flush();
+        // Ici, on récupérera l'annonce correspondante à $id
+       if ($request->isMethod('POST')) {
+           $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée');
+
+           return $this->redirectToRoute('nh_platform_view', array('id' => 3));
+       }*/
+       $advert = array(
             'title' => 'rech dev symfony',
             'id' => $id,
             'author' => 'Alex',
             'content' => 'Nous recherchons un dev symfony',
-            'date' => new \Datetime(),
+            'date' => new \Datetime()
             );
-//            $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée.');
-//            return $this->redirectToRoute('nh_platform_view', array('id' => 3));
-        return $this->render('NHPlatformBundle:Advert:edit.html.twig', array(
+        return $this->render('NHPlatformBundle:Advert:edit', array(
             'advert' => $advert
         ));
     }
 
     public function deleteAction($id)
     {
-        return $this->render('NHPlatformBundle:Advert:delete.html.twig');
+        return $this->render('NHPlatformBundle:Advert:delete');
     }
 
     public function menuAction($limit)
     {
         //on fixe une liste ici pour la récupérer depuis la BDD
         $listAdverts = array(
-            array('id' => 9, 'title' => 'Test1'),
-            array('id' => 10, 'title' => 'Test2'),
-            array('id' => 11, 'title' => 'Test3'),
+            array('id' => 17, 'title' => 'Recuperation 17'),
+            array('id' => 18, 'title' => 'recup de lid'),
+            array('id' => 19, 'title' => 'recup de lid 19'),
         );
         return $this->render('NHPlatformBundle:Advert:menu.html.twig', array(
             //le contrôleur passe ici les variables nécessaires au TEMPLATE

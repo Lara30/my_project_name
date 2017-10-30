@@ -20,6 +20,17 @@
         <div class="well">
     {{ advert.content }}
         </div>
+
+    {% if not advert.categories.empty %}
+        <p>
+            Cette annonce est parue dans les catégories suivantes :
+            {% for category in advert.categories %}
+                {{ category.name }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+
+
 <p>
     <a href="{{ path('nh_platform_home') }}" class="btn btn-default">
         <i class="glyphicon glyphicon-chevron-left"></i>
@@ -39,23 +50,3 @@
 
 {% endblock %}
 
-   {#
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Affichage de l'annonce {{ id }}</title>
-</head>
-
-<body>
-<h1> Annonce n°{{ id }}!</h1>
-
-<div>
-    {% for message in app.session.flashbag.get('info') %}
-    <p>Message flash : {{ message }}</p>
-    {% endfor %}
-</div>
-
-<p>Lecture de l'annonce qui a l'id : {{ id }}<br />
-</p>
-</body>
-</html>#}
