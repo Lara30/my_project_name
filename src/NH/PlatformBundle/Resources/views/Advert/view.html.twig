@@ -20,7 +20,8 @@
         <div class="well">
     {{ advert.content }}
         </div>
-
+{# utilisation du empty pour savoir si la liste des catégories est vide
+le "advert.categories pour récupérer les catégories de l'annonce #}
     {% if not advert.categories.empty %}
         <p>
             Cette annonce est parue dans les catégories suivantes :
@@ -29,6 +30,18 @@
             {% endfor %}
         </p>
     {% endif %}
+
+
+    {% if listAdvertSkills|length > 0 %}
+<div>
+    cette annonce requiert les compétences suivantes :
+    <ul>
+        {% for advertSkill in listAdvertSkills %}
+        <li>{{ advertSkill.skill.name }} : niveau {{ advertSkill.level }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 
 
 <p>

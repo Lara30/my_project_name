@@ -4,9 +4,11 @@
 namespace NH\PlatformBundle\Controller;
 
 use NH\PlatformBundle\Entity\Advert;
+use NH\PlatformBundle\Entity\AdvertSkill;
 use NH\PlatformBundle\Entity\Application;
 use NH\PlatformBundle\Entity\Image;
 
+use NH\PlatformBundle\NHPlatformBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,6 +61,8 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
+        //on récupère l'em
+        $em = $this->getDoctrine()->getManager();
         //création de l'entité Advert
         $advert = new Advert();
 
@@ -67,6 +71,21 @@ class AdvertController extends Controller
         $advert->setAuthor('Alex');
         $advert->setContent("un dev symfony debutant");
         $advert->setDate(new \Datetime());
+
+        //on récupère toutes les compétences possibles
+        $listSkills = $em->getRepository('NHPlatformBundle:Skill')->findAll();
+        //pour chaque compétence
+        foreach ($listSkills as $skill) {
+            //on crée une nouvelle relation entre 1 annonce et 1 compétence
+            $advertSkill = new AdvertSkill();
+            // on la lie à l'annonce
+            $advertSkill->setAdvert($advert);
+            //on lie à la compétence, qui change ici dans la boucle
+            $advertSkill->setSkill($skill);
+            //arbitrairement on dit que chaque cptce est requise au niveau "expert"
+            $advertSkill->setLevel('Expert');
+            $em->persist($advertSkill);
+        }
         //on ne peut pas définir ni la date ni la publication
         //car ces attributs sont définis automatiquement dans le constructeur
 
@@ -111,19 +130,18 @@ class AdvertController extends Controller
             return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
         }
         //si on n''est pas en POST = on affiche le formulaire
-        return $this->render('NHPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
+        return $this->render('NHPlatformBundle:Advert:add.html.twig', array(
+            'advert' => $advert));
     }
 
 //on appelle chaque fonction par le nom de son fichier
     public function viewAction($id)
     {
         //on récupère le repository
-        $repository = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('NHPlatformBundle:Advert');
+        $em = $this->getDoctrine()->getManager();
 
         //on récupère l'entité correspondante à l'id $id
-        $advert = $repository->find($id);
+        $advert = $em->getRepository('NHPlatformBundle:Advert')->find($id);
         //$advert est donc une instance de NH\PlatformBundle\Entity\Advert
         //ou null si l'id n'existe pas d'où ce if
         if (null === $advert) {
@@ -131,10 +149,14 @@ class AdvertController extends Controller
         }
 
         //on récupère la liste des candidatures de cette annonce
-        /*$listApplications = $repository
+        $listApplications = $em
             ->getRepository('NHPlatformBundle:Application')
             ->findBy(array('advert' => $advert))
-            ;*/
+            ;
+        $listAdvertSkills = $em
+            ->getRepository('NHPlatformBundle:AdvertSkill')
+            ->findBy(array('advert' => $advert))
+            ;
         /*  $advert = array(
               'title' => 'recherche dév Symfony2',
               'id' => $id,
@@ -146,64 +168,100 @@ class AdvertController extends Controller
         //ici on récupère l'annonce qui correspond à l'id
         return $this->render('NHPlatformBundle:Advert:view.html.twig', array(
             'advert'           => $advert,
-//            'listApplications' => $listApplications
+            'listApplications' => $listApplications,
+            'listAdvertSkills' => $listAdvertSkills,
         ));
     }
 
 
     public function editAction($id, Request $request)
     {
- /*       $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
+
         // On récupère l'annonce $id
-        $advert = $em->getRepository('GCPlatformBundle:Advert')->find($id);
+        $advert = $em->getRepository('NHPlatformBundle:Advert')->find($id);
+
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
         // La méthode findAll retourne toutes les catégories de la base de données
-        $listCategories = $em->getRepository('GCPlatformBundle:Category')->findAll();
+        $listCategories = $em->getRepository('NHPlatformBundle:Category')->findAll();
+
         // On boucle sur les catégories pour les lier à l'annonce
         foreach ($listCategories as $category) {
             $advert->addCategory($category);
         }
         // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
-        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
-        // Étape 2 : On déclenche l'enregistrement
-        $em->flush();
-        // Ici, on récupérera l'annonce correspondante à $id
-       if ($request->isMethod('POST')) {
-           $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée');
+        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupéré depuis Doctrine
 
-           return $this->redirectToRoute('nh_platform_view', array('id' => 3));
-       }*/
-       $advert = array(
+        // Ici, on récupérera l'annonce correspondante à $id
+        if ($request->isMethod('POST')) {
+          // Étape 2 : On déclenche l'enregistrement
+          $em->flush();
+          $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée');
+
+          return $this->redirectToRoute('nh_platform_view', array('id' => $advert->getId()));
+       }
+      /* $advert = array(
             'title' => 'rech dev symfony',
             'id' => $id,
             'author' => 'Alex',
             'content' => 'Nous recherchons un dev symfony',
             'date' => new \Datetime()
-            );
-        return $this->render('NHPlatformBundle:Advert:edit', array(
-            'advert' => $advert
+            );*/
+        return $this->render('NHPlatformBundle:Advert:edit.html.twig', array(
+            'advert' => $advert,
         ));
     }
 
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
-        return $this->render('NHPlatformBundle:Advert:delete');
+        $em = $this->getDoctrine()->getManager();
+
+        //on récupère l'annonce $id
+        $advert = $em->getRepository('NHPlatformBundle:Advert')->find($id);
+
+        if (null === $advert) {
+            throw new NotFoundHttpException("l'annonce d'id ".$id." n'existe pas.");
+        }
+        //on boucle sur les catégories de l'annonce pour les supprimer
+        foreach ($advert->getCategories() as $category) {
+            $advert->removeCategory($category);
+        }
+        //pour persister le changement dans la relation, il faut persister l'entité proprio
+        //avdert=propriétaire donc on ne la persiste pas
+
+        // on déclenche la modif
+        $em->flush();
+
+       return $this->render('NHPlatformBundle:Advert:delete.html.twig', array(
+           'advert' => $advert
+       ));
     }
+
 
     public function menuAction($limit)
     {
         //on fixe une liste ici pour la récupérer depuis la BDD
         $listAdverts = array(
-            array('id' => 17, 'title' => 'Recuperation 17'),
-            array('id' => 18, 'title' => 'recup de lid'),
-            array('id' => 19, 'title' => 'recup de lid 19'),
+            array('id' => 12, 'title' => 'Recuperation 12'),
+            array('id' => 13, 'title' => 'recup de lid 13'),
+            array('id' => 14, 'title' => 'recup de lid 14'),
         );
         return $this->render('NHPlatformBundle:Advert:menu.html.twig', array(
             //le contrôleur passe ici les variables nécessaires au TEMPLATE
             'listAdverts' => $listAdverts
         ));
+    }
+
+    public function testAction()
+    {
+        $repository = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository('NHPlatformBundle:Advert')
+            ;
+        $listAdverts = $repository->myFindAll();
     }
 
     // on définit la méthode indexAction()

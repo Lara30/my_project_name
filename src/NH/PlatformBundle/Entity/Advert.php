@@ -61,13 +61,14 @@ class Advert
      * @ORM\JoinColumn
      */
     private $image;
-
+//le proprio d'une relation Many-to-One est toujours le côté Many
     /**
      * @ORM\ManyToMany(targetEntity="NH\PlatformBundle\Entity\Category", cascade={"persist"})
      * @ORM\JoinTable(name="nh_advert_category")
      */
     private $categories;
-
+//ce n'est pas une reltion propriétaire donc One-to-Many
+//le mappedBy correspond à l'attribut de l'entité proprio qui pointe vers l'entité inverse "le private $advert"
     /**
      * @ORM\OneToMany(targetEntity="NH\PlatformBundle\Entity\Application", mappedBy="advert")
      */
@@ -249,21 +250,27 @@ class Advert
     {
         return $this->categories;
     }
+
     /**
+     * Add application
+     *
      * @param Application $application
+     * @return Advert
      */
+
     public function addApplication(Application $application)
     {
         $this->applications[] = $application;
         // On lie l'annonce à la candidature
         $application->setAdvert($this);
+//        return $this;
     }
-    /**
-     * @param Application $application
-     */
+
     public function removeApplication(Application $application)
     {
         $this->applications->removeElement($application);
+//        et si notre relation était facultative
+//        $application->setAdvert(null);
     }
     /**
      * @return \Doctrine\Common\Collections\Collection

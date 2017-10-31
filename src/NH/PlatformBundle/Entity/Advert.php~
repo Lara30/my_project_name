@@ -14,7 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 class Advert
 {
-     /**@var int
+     /**
+      * @var int
+      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -22,17 +24,11 @@ class Advert
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="NH\PlatformBundle\Entity\Category", cascade={"persist"})
-     * @ORM\JoinTable(name="nh_advert_category")
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
      */
-    private $categories;
-
-    //l'entité advert est propriétaire de la relation
-    /**
-     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist"})
-     * @ORM\JoinColumn
-     */
-    private $image;
+    private $date;
 
     /**
      * @var string
@@ -55,33 +51,29 @@ class Advert
     private $content;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date", type="datetime")
-     */
-    private $date;
-
-
-    //test selon le tuto
-    /**
      * @ORM\Column(name="published", type="boolean")
-     */
-
-    /**
-     * Get id
-     * @return int
-     */
-
-    /**
-     * @ORM\Column(name="published", type="boolean")
-     * @return int
      */
     private $published = true;
 
-    public function getId()
-    {
-        return $this->id;
-    }
+    //l'entité advert est propriétaire de la relation
+    /**
+     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @ORM\JoinColumn
+     */
+    private $image;
+//le proprio d'une relation Many-to-One est toujours le côté Many
+    /**
+     * @ORM\ManyToMany(targetEntity="NH\PlatformBundle\Entity\Category", cascade={"persist"})
+     * @ORM\JoinTable(name="nh_advert_category")
+     */
+    private $categories;
+//ce n'est pas une reltion propriétaire donc One-to-Many
+//le mappedBy correspond à l'attribut de l'entité proprio qui pointe vers l'entité inverse "le private $advert"
+    /**
+     * @ORM\OneToMany(targetEntity="NH\PlatformBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications;
+
     //comme la propriété $categories doit être un arraycollection,
     //on doit la définir dans un constructeur :
     /**
@@ -89,9 +81,143 @@ class Advert
      */
     public function __construct()
     {
-//        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->date = new \DateTime();
-        $this->categories = new ArrayCollection();
+        $this->categories   = new ArrayCollection();
+        $this->applications = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return Advert
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+//        return $this;
+    }
+
+    /**
+     * Get date
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set titre
+     *
+     * @param string $titre
+     * @return Advert
+     */
+    public function setTitre($titre)
+    {
+        $this->titre = $titre;
+//        return $this;
+    }
+
+    /**
+     * Get titre
+     *
+     * @return string
+     */
+    public function getTitre()
+    {
+        return $this->titre;
+    }
+    /**
+     * Set author
+     *
+     * @param string $author
+     * @return Advert
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+//        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+    /**
+     * Set content
+     *
+     * @param string $content
+     * @return Advert
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+//        return $this;
+    }
+
+    /**
+     * Get content
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Set published
+     * @param boolean $published
+     * @return Advert
+     */
+    public function setPublished($published)
+    {
+        $this->published = $published;
+    }
+
+    /**
+     * Get published
+     *
+     * @return boolean
+     */
+    public function getPublished()
+    {
+        return $this->published;
+    }
+
+    /**set image
+     *
+     * @param Image|null $image
+     * @return Advert
+
+     */
+    public function setImage(Image $image = null)
+    {
+        $this->image = $image;
+//        return $this;
+    }
+
+    /**
+     * Get image
+     * @return \NH\PlatformBundle\Entity\Image
+     */
+
+    public function getImage()
+    {
+        return $this->image;
     }
 
     /**
@@ -117,143 +243,34 @@ class Advert
         $this->categories->removeElement($category);
     }
 
-//ici on récupère une liste de catégories
     /**
-     * Get categories
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getCategories()
     {
         return $this->categories;
     }
-
     /**
-     * Set date
-     *
-     * @param \DateTime $date
-     * @return Advert
+     * @param Application $application
      */
-    public function setDate($date)
+    public function addApplication(Application $application)
     {
-        $this->date = $date;
-        return $this;
+        $this->applications[] = $application;
+        // On lie l'annonce à la candidature
+        $application->setAdvert($this);
     }
-
     /**
-     * Get date
-     * @return \DateTime
+     * @param Application $application
      */
-    public function getDate()
+    public function removeApplication(Application $application)
     {
-        return $this->date;
+        $this->applications->removeElement($application);
     }
-
     /**
-     * Set titre
-     *
-     * @param string $titre
-     * @return Advert
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function setTitre($titre)
+    public function getApplications()
     {
-        $this->titre = $titre;
-        return $this;
-    }
-
-    /**
-     * Get titre
-     *
-     * @return string
-     */
-    public function getTitre()
-    {
-        return $this->titre;
-    }
-
-    /**
-     * Set author
-     *
-     * @param string $author
-     * @return Advert
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
-        return $this;
-    }
-
-    /**
-     * Get author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
-    /**
-     * Set content
-     *
-     * @param string $content
-     * @return Advert
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-        return $this;
-    }
-
-    /**
-     * Get content
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Set published
-     * @param boolean $published
-     * @return Advert
-     */
-    public function setPublished($published)
-    {
-        $this->published = $published;
-        return $this;
-    }
-
-    /**
-     * Get published
-     *
-     * @return boolean
-     */
-    public function getPublished()
-    {
-        return $this->published;
-    }
-
-    /**set image
-     *
-     * @param Image|null $image
-     * @return Advert
-     *
-     */
-    public function setImage(Image $image = null)
-    {
-        $this->image = $image;
-        return $this;
-    }
-
-    /**
-     * Get image
-     * @return \NH\PlatformBundle\Entity\Image
-     */
-
-    public function getImage()
-    {
-        return $this->image;
+        return $this->applications;
     }
 }
