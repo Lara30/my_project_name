@@ -45,6 +45,11 @@ nh_platform_delete:
     requirements:
         id: \d+
 
+nh_platform_test:
+    path:    /test
+    defaults:
+        _controller: NHPlatformBundle:Advert:test
+
 
 #nh_platform_affichage_params:
 #    path:    /{year}/{params}.{format}

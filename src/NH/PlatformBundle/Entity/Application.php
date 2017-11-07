@@ -7,7 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="nh_application")
- * @ORM\Entity(repositoryClass="NH\PlatformBundle\Entity\ApplicationRepository")
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
 
 class Application
@@ -44,6 +45,22 @@ class Application
     public function __construct()
     {
         $this->date = new \Datetime();
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function increase()
+    {
+        $this->getAdvert()->increaseApplication();
+    }
+
+    /**
+     * @ORM\PreRemove
+     */
+    public function decrease()
+    {
+        $this->getAdvert()->decreaseApplication();
     }
 
     /**
@@ -91,7 +108,7 @@ class Application
     }
 
     /**
-     * @param \Datetime
+     * @param \Datetime $date
      * @return $this
      */
     public function setDate(\Datetime $date)
@@ -111,11 +128,11 @@ class Application
     /**
      * Set advert
      *
-     * @param \NH\PlatformBundle\Entity\Advert $advert
+     * @param Advert $advert
      *
      * @return Application
      */
-    public function setAdvert(\NH\PlatformBundle\Entity\Advert $advert)
+    public function setAdvert(Advert $advert)
     {
         $this->advert = $advert;
     }
@@ -123,7 +140,7 @@ class Application
     /**
      * Get advert
      *
-     * @return \NH\PlatformBundle\Entity\Advert
+     * @return Advert
      */
     public function getAdvert()
     {

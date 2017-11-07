@@ -8,12 +8,12 @@ use NH\PlatformBundle\Entity\AdvertSkill;
 use NH\PlatformBundle\Entity\Application;
 use NH\PlatformBundle\Entity\Image;
 
-use NH\PlatformBundle\NHPlatformBundle;
+//use NH\PlatformBundle\NHPlatformBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+//use Symfony\Component\HttpFoundation\RedirectResponse;
 //use Symfony\Component\HttpFoundation\JsonResponse;
 
 //le nom de notre contrôleur respecte le nom du fichier pour que l'autoload fonctionne
@@ -130,8 +130,7 @@ class AdvertController extends Controller
             return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
         }
         //si on n''est pas en POST = on affiche le formulaire
-        return $this->render('NHPlatformBundle:Advert:add.html.twig', array(
-            'advert' => $advert));
+        return $this->render('NHPlatformBundle:Advert:add.html.twig');
     }
 
 //on appelle chaque fonction par le nom de son fichier
@@ -191,13 +190,14 @@ class AdvertController extends Controller
         foreach ($listCategories as $category) {
             $advert->addCategory($category);
         }
+        $em->flush();
+
         // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
         // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupéré depuis Doctrine
 
         // Ici, on récupérera l'annonce correspondante à $id
         if ($request->isMethod('POST')) {
           // Étape 2 : On déclenche l'enregistrement
-          $em->flush();
           $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée');
 
           return $this->redirectToRoute('nh_platform_view', array('id' => $advert->getId()));
@@ -210,11 +210,11 @@ class AdvertController extends Controller
             'date' => new \Datetime()
             );*/
         return $this->render('NHPlatformBundle:Advert:edit.html.twig', array(
-            'advert' => $advert,
+            'advert' => $advert
         ));
     }
 
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -234,9 +234,7 @@ class AdvertController extends Controller
         // on déclenche la modif
         $em->flush();
 
-       return $this->render('NHPlatformBundle:Advert:delete.html.twig', array(
-           'advert' => $advert
-       ));
+       return $this->render('NHPlatformBundle:Advert:delete.html.twig');
     }
 
 
@@ -244,9 +242,9 @@ class AdvertController extends Controller
     {
         //on fixe une liste ici pour la récupérer depuis la BDD
         $listAdverts = array(
-            array('id' => 12, 'title' => 'Recuperation 12'),
-            array('id' => 13, 'title' => 'recup de lid 13'),
-            array('id' => 14, 'title' => 'recup de lid 14'),
+            array('id' => 1, 'title' => 'Recuperation 12'),
+            array('id' => 3, 'title' => 'recup de lid 13'),
+            array('id' => 4, 'title' => 'recup de lid 14'),
         );
         return $this->render('NHPlatformBundle:Advert:menu.html.twig', array(
             //le contrôleur passe ici les variables nécessaires au TEMPLATE
@@ -256,12 +254,19 @@ class AdvertController extends Controller
 
     public function testAction()
     {
-        $repository = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getRepository('NHPlatformBundle:Advert')
-            ;
-        $listAdverts = $repository->myFindAll();
+        $advert = new Advert();
+        $advert->setTitre("rech dévelop");
+        $advert->setAuthor("nad");
+        $advert->setContent("tester");
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($advert);
+        $em->flush();// c'est à ce moment qu'est généré le slug
+
+        return new Response('Slug généré : '.$advert->getSlug());
+        return new Response('Slug généré : '.$advert->getSlug());
+
+        //affiche "slug généré : recherche-developp"
     }
 
     // on définit la méthode indexAction()

@@ -12,7 +12,25 @@ use Doctrine\ORM\QueryBuilder;
  */
 class AdvertRepository extends EntityRepository
 {
-    public function myFindAll()
+    //cette fonction va retourner un tableau Advert
+    public function getAdvertWithCategories(array $categoryNames)
+    {
+        $qb = $this->createQueryBuilder('a');
+        //jointure entre l'entité category avec pour alias "c"
+        $qb
+            ->innerJoin('a.categories', 'c')
+            ->addSelect('c')
+            ;
+        //on filtre sur le nom des catégories à l'aide d'un IN
+        $qb->where($qb->expr()->in('c.name', $categoryNames));
+
+        // on retourne le résultat
+        return $qb
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+    /*public function myFindAll()
     {
         // Méthode 2 :
         $queryBuilder = $this->createQueryBuilder('a');
@@ -38,6 +56,5 @@ class AdvertRepository extends EntityRepository
             ->getQuery()
             ->getResult()
             ;
-    }
-
+    }*/
 }

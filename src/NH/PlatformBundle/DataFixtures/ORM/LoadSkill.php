@@ -1,7 +1,7 @@
 <?php
 // src/NH/PlatformBundle/DataFixtures/ORM/LoadSkill.php
 
-namespace NH\PlatformBundle\DataFixtures\ORM;
+namespace NH\PlatformBundle\DataFixtureORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;

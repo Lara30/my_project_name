@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
 
  * @ORM\Table(name="nh_image")
- * @ORM\Entity(repositoryClass="NH\PlatformBundle\Entity\ImageRepository")
+ * @ORM\Entity
  */
 
 class Image
@@ -48,7 +48,7 @@ class Image
     public function setUrl($url)
     {
         $this->url = $url;
-        return $this;
+//        return $this;
     }
 
     /**
@@ -71,7 +71,7 @@ class Image
     public function setAlt($alt)
     {
         $this->alt = $alt;
-        return $this;
+//        return $this;
     }
 
     /**

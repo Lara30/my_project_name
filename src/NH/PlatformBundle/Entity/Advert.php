@@ -5,27 +5,29 @@ namespace NH\PlatformBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+//on utilise le namespace de l'annotation
+use Gedmo\Mapping\Annotation as Gedmo;
+
 /**
  * Advert
  *
- * @ORM\Table(name="advert")
- * @ORM\Entity(repositoryClass="NH\PlatformBundle\Repository\AdvertRepository")
+ * @ORM\Table(name="nh_advert")
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
-
+//l'annotation Haslife permet à doctrine de vérifier les callbacks éventuels contenus dans l'entité
 class Advert
 {
      /**
       * @var int
-      *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+      * @ORM\Column(name="id", type="integer")
+      * @ORM\Id
+      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="date", type="datetime")
      */
     private $date;
@@ -38,14 +40,12 @@ class Advert
 
     /**
      * @var string
-     *
      * @ORM\Column(name="author", type="string", length=255)
      */
     private $author;
 
     /**
      * @var string
-     *
      * @ORM\Column(name="content", type="string", length=255)
      */
     private $content;
@@ -74,6 +74,27 @@ class Advert
      */
     private $applications;
 
+    /**
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
+     * @ORM\Column(name="nb_applications", type="integer")
+     */
+    private $nbApplications = 0;
+
+
+//l'annotation Slug s'applique simplement sur un attribut qui va contenir le sluf
+//l'option fields permet de définir les attributs à partir desquels le slug sera généré :
+// ici le titre uniquement
+    /**
+     * @Gedmo\Slug(fields={"titre"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
+
+
     //comme la propriété $categories doit être un arraycollection,
     //on doit la définir dans un constructeur :
     /**
@@ -81,8 +102,26 @@ class Advert
      */
     public function __construct()
     {
+        $this->date         = new \DateTime();
         $this->categories   = new ArrayCollection();
         $this->applications = new ArrayCollection();
+    }
+    /**
+     * @ORM\PreUpdate
+     */
+    public function updateDate()
+    {
+        $this->setUpdatedAt(new \DateTime());
+    }
+
+    public function increaseApplication()
+    {
+        $this->nbApplications++;
+    }
+
+    public function decreaseApplication()
+    {
+        $this->nbApplications--;
     }
 
     /**
@@ -198,11 +237,10 @@ class Advert
         return $this->published;
     }
 
-    /**set image
-     *
+    /**
+     * Set image
      * @param Image|null $image
      * @return Advert
-
      */
     public function setImage(Image $image = null)
     {
@@ -212,9 +250,8 @@ class Advert
 
     /**
      * Get image
-     * @return \NH\PlatformBundle\Entity\Image
+     * @return Image
      */
-
     public function getImage()
     {
         return $this->image;
@@ -234,7 +271,6 @@ class Advert
 
     /**
      * Remove category
-     *
      * @param Category $category
      */
     public function removeCategory(Category $category)
@@ -253,11 +289,9 @@ class Advert
 
     /**
      * Add application
-     *
      * @param Application $application
      * @return Advert
      */
-
     public function addApplication(Application $application)
     {
         $this->applications[] = $application;
@@ -266,6 +300,9 @@ class Advert
 //        return $this;
     }
 
+    /**
+     * @param Application $application
+     */
     public function removeApplication(Application $application)
     {
         $this->applications->removeElement($application);
@@ -278,5 +315,55 @@ class Advert
     public function getApplications()
     {
         return $this->applications;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\Datetime $updatedAt = null)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+    /**
+     * @param integer $nbApplications
+     */
+    public function setNbApplications($nbApplications)
+    {
+        $this->nbApplications = $nbApplications;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getNbApplications()
+    {
+        return $this->nbApplications;
+    }
+
+    /**
+     * Set slug
+     * @param string $slug
+     * @return Advert
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    /**
+     * Get slug
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

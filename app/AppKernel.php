@@ -1,6 +1,5 @@
 <?php
 
-
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
@@ -19,6 +18,7 @@ class AppKernel extends Kernel
 //            new AppBundle\AppBundle(),
             //le générateur a généré la ligne suivante :
             new NH\PlatformBundle\NHPlatformBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

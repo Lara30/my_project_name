@@ -2,6 +2,7 @@
 // src/NH/PlatformBundle/Entity/AdvertSkill.php
 
 namespace NH\PlatformBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -57,7 +58,7 @@ class AdvertSkill
     public function setLevel($level)
     {
         $this->level = $level;
-        return $this;
+//        return $this;
     }
 
     /**
@@ -73,20 +74,20 @@ class AdvertSkill
     /**
      * Set advert
      *
-     * @param \NH\PlatformBundle\Entity\Advert $advert
+     * @param Advert $advert
      *
      * @return AdvertSkill
      */
-    public function setAdvert(\NH\PlatformBundle\Entity\Advert $advert)
+    public function setAdvert(Advert $advert)
     {
         $this->advert = $advert;
-        return $this;
+//        return $this;
     }
 
     /**
      * Get advert
      *
-     * @return \NH\PlatformBundle\Entity\Advert
+     * @return Advert
      */
     public function getAdvert()
     {
@@ -96,20 +97,20 @@ class AdvertSkill
     /**
      * Set skill
      *
-     * @param \NH\PlatformBundle\Entity\Skill $skill
+     * @param Skill $skill
      *
      * @return AdvertSkill
      */
-    public function setSkill(\NH\PlatformBundle\Entity\Skill $skill)
+    public function setSkill(Skill $skill)
     {
         $this->skill = $skill;
-        return $this;
+//        return $this;
     }
 
     /**
      * Get skill
      *
-     * @return \NH\PlatformBundle\Entity\Skill
+     * @return Skill
      */
     public function getSkill()
     {
