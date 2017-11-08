@@ -41,7 +41,6 @@ class Application
      */
     private $advert;
 
-
     public function __construct()
     {
         $this->date = new \Datetime();

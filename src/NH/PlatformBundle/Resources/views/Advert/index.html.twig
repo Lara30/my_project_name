@@ -17,10 +17,21 @@
                 {{ advert.title }}
             </a>
             par {{ advert.author }},
+{#test#}
+            {{ advert.image }}
+
             le {{ advert.date|date('d/m/Y') }}
         </li>
         {% else %}
         <li>Pas d'annonces..... pour le moment! </li>
+        {% endfor %}
+    </ul>
+    <ul class="pagination">
+        {#on utilise la fonction range (a,b) qui crée un tableau de valeurs entre a et b#}
+        {% for p in range(1, nbPages) %}
+        <li{% if p == page %} class="active"{% endif %}>
+            <a href="{{ path('nh_platform_home', {'page': p}) }}">{{ p }}</a>
+        </li>
         {% endfor %}
     </ul>
 
