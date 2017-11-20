@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
  * @ORM\Table(name="nh_image")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 
 class Image

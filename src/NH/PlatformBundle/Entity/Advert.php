@@ -7,12 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 //on utilise le namespace de l'annotation
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * Advert
  *
  * @ORM\Table(name="nh_advert")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="NH\PlatformBundle\Repository\AdvertRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 //l'annotation Haslife permet à doctrine de vérifier les callbacks éventuels contenus dans l'entité
@@ -57,8 +58,7 @@ class Advert
 
     //l'entité advert est propriétaire de la relation
     /**
-     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist"})
-     * @ORM\JoinColumn
+     * @ORM\OneToOne(targetEntity="NH\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
      */
     private $image;
 //le proprio d'une relation Many-to-One est toujours le côté Many
@@ -134,6 +134,15 @@ class Advert
     }
 
     /**
+     * Get date
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
      * Set date
      *
      * @param \DateTime $date
@@ -143,15 +152,6 @@ class Advert
     {
         $this->date = $date;
 //        return $this;
-    }
-
-    /**
-     * Get date
-     * @return \DateTime
-     */
-    public function getDate()
-    {
-        return $this->date;
     }
 
     /**
@@ -355,7 +355,7 @@ class Advert
     public function setSlug($slug)
     {
         $this->slug = $slug;
-        return $this;
+//        return $this;
     }
 
     /**

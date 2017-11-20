@@ -17,9 +17,6 @@
                 {{ advert.title }}
             </a>
             par {{ advert.author }},
-{#test#}
-            {{ advert.image }}
-
             le {{ advert.date|date('d/m/Y') }}
         </li>
         {% else %}
@@ -34,6 +31,5 @@
         </li>
         {% endfor %}
     </ul>
-
 {% endblock %}
 

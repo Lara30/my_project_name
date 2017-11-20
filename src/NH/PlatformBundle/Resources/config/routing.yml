@@ -4,8 +4,8 @@
 #le nom de la route
 nh_platform_home:
 #une entrée (ligne path) : URL à capturer
-                        #on rajoute le param page pour avoir une url plus propre
-    path:    /{page}
+#on rajoute le param page pour avoir une url plus propre
+    path:    /
 #    une sortie (ligne defaults) : paramètres de la route qui dit quel contrôleur appeler
     defaults:
         _controller: NHPlatformBundle:Advert:index
@@ -18,13 +18,6 @@ nh_platform_view:
     path:    /advert/view/{id}
     defaults:
         _controller: NHPlatformBundle:Advert:view
-
-#nh_platform_affichage:
-#    path:    /advert/{id}
-#    defaults:
-#        _controller: NHPlatformBundle:Advert:affichage
-#    requirements:
-#        id: \d+
 
 nh_platform_add:
     path:    /add
@@ -64,10 +57,10 @@ nh_platform_test:
 #        #pareil pour html/xml, le .rss ne sera pas interceptée
 #        format: html|xml
 
-nh_platform_page2:
-    path:     /page2
-    defaults:
-        _controller: NHPlatformBundle:Advert:secondepage
+#nh_platform_page2:
+#    path:     /page2
+#    defaults:
+#        _controller: NHPlatformBundle:Advert:secondepage
 
 #chaque route fait la correspondance entre une URL et un jeu de paramètres
 #le paramètre qui nous intéresse est _controlle/avertr = le contrôleur à exécuter

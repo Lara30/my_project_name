@@ -7,12 +7,19 @@ use NH\PlatformBundle\Entity\Advert;
 use NH\PlatformBundle\Entity\AdvertSkill;
 use NH\PlatformBundle\Entity\Application;
 use NH\PlatformBundle\Entity\Image;
+use NH\PlatformBundle\Form\AdvertType;
 
-//use NH\PlatformBundle\NHPlatformBundle;
+use NH\PlatformBundle\NHPlatformBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 //use Symfony\Component\HttpFoundation\RedirectResponse;
 //use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -20,37 +27,37 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdvertController extends Controller
 {
-   /* public function affichageAction($id)
-    {
-        return new JsonResponse(array('id' => $id));
-    }*/
+    /* public function affichageAction($id)
+     {
+         return new JsonResponse(array('id' => $id));
+     }*/
 
     public function indexAction($page)
     {
         //comme on ne sait pas combien il y a de pages
         if ($page < 1) {
-            //on déclenche une exception qui va afficher une page d'erreur
-            throw new NotFoundHttpException("page " .$page . " inexistante");
-        }
-        //il faut fixer le nombre d'annonce pas page
-        $nbPerPage = 3;
+           //on déclenche une exception qui va afficher une page d'erreur
+            throw new NotFoundHttpException('page ".$page."inexistante.');
+       }
+        //il faut fixer le nombre d'annonce par page
+
+        $nbPerPage = 2;
         //pour récupérer la liste de toutes les annonces = findAll()
+
         //désormais on utilise getAdverts
         //il faut récupérer l'objet Paginator
-        $listAdverts = $this->getDoctrine()
+        $listAdverts = $this
+            ->getDoctrine()
             ->getManager()
             ->getRepository('NHPlatformBundle:Advert')
-            ->getAdverts($page, $nbPerPage)
-        ;
+            ->getAdverts($page, $nbPerPage);
         //calcul du nbre total de pages = count
         $nbPages = ceil(count($listAdverts) / $nbPerPage);
 
         //on gère l'erreur 404
         if ($page > $nbPages) {
-            throw $this->createNotFoundException("la page ".$page."n'existe pas");
+            throw $this->createNotFoundException("la page " . $page . "n'existe pas");
         }
-
-
         //on récupèrera la liste des annonces puis on la passera au template
         //on ne fait que l'appeler pour le moment
         //infos nécessaires à la vue
@@ -59,28 +66,6 @@ class AdvertController extends Controller
             'nbPages'     => $nbPages,
             'page'        => $page,
         ));
-          /*  'listAdverts' => array(
-                array(
-                    'title' => 'Recherche développpeur Symfony',
-                    'id' => 1,
-                    'author' => 'Alexandre',
-                    'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon',
-                    'date' => new \Datetime()),
-
-                array(
-                    'title' => 'Mission de webmaster',
-                    'id' => 2,
-                    'author' => 'Hugo',
-                    'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet',
-                    'date' => new \Datetime()),
-
-                array(
-                    'title' => 'Offre de stage webdesigner',
-                    'id' => 3,
-                    'author' => 'Mathieu',
-                    'content' => 'Nous proposons un poste pour webdesigner',
-                    'date' => new \Datetime()),
-            )));*/
     }
 
 //on appelle chaque fonction par le nom de son fichier
@@ -94,18 +79,16 @@ class AdvertController extends Controller
         //$advert est donc une instance de NH\PlatformBundle\Entity\Advert
         //ou null si l'id n'existe pas d'où ce if
         if (null === $advert) {
-            throw new NotFoundHttpException("l'annonce d'id " .$id. "n'existe pas.");
+            throw new NotFoundHttpException("l'annonce d'id " .$id." n'existe pas.");
         }
 
         //on récupère la liste des candidatures de cette annonce
         $listApplications = $em
             ->getRepository('NHPlatformBundle:Application')
-            ->findBy(array('advert' => $advert))
-            ;
+            ->findBy(array('advert' => $advert));
         $listAdvertSkills = $em
             ->getRepository('NHPlatformBundle:AdvertSkill')
-            ->findBy(array('advert' => $advert))
-            ;
+            ->findBy(array('advert' => $advert));
         /*  $advert = array(
               'title' => 'recherche dév Symfony2',
               'id' => $id,
@@ -123,15 +106,42 @@ class AdvertController extends Controller
     }
 
     public function addAction(Request $request)
-    {
-        $em = $this->getDoctrine()->getManager();
-        // On ne sait toujours pas gérer le formulaire, patience cela vient dans la prochaine partie !
-        if ($request->isMethod('POST')) {
-            $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
-            return $this->redirectToRoute('nh_platform_affichage', array(
-                'id' => $advert->getId()));
-        }
-        return $this->render('NHPlatformBundle:Advert:add.html.twig');
+    { // On crée un objet Advert
+        $advert = new Advert();
+        $form = $this->get('form.factory')->create(AdvertType::class, $advert);
+
+        //si la requête est en POST
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            //on fait le lien requête <--> formulaire
+            //à partir de maintenant, la variable $advert contient
+            // les valeurs entrées dans le form p/le visiteur
+
+            //on vérifie que les valeurs entrées sont correctes
+                //on enregistre notre objet $advert dans la bdd
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($advert);
+                $em->flush();
+
+                $request->getSession()->getFlashBag()->add('notice', 'annonce enregistrée');
+                return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
+            }
+        // On passe la méthode createView() du formulaire à la vue
+        // afin qu'elle puisse afficher le formulaire toute seule
+        return $this->render('NHPlatformBundle:Advert:add.html.twig', array(
+            'form' => $form->createView(),
+        ));
+        //AVANT
+        /*    $em = $this->getDoctrine()->getManager();
+            // On ne sait toujours pas gérer le formulaire, patience cela vient dans la prochaine partie !
+            if ($request->isMethod('POST')) {
+                $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
+
+                return $this->redirectToRoute('nh_platform_affichage', array(
+                    'id' => $advert->getId()));
+            }
+            return $this->render('NHPlatformBundle:Advert:add.html.twig');*/
+        //FIN AVANT
+
     }
 
     /* $em = $this->getDoctrine()->getManager();
@@ -202,9 +212,9 @@ class AdvertController extends Controller
          return $this->redirectToRoute('nh_platform_affichage', array('id' => $advert->getId()));
      }
      //si on n''est pas en POST = on affiche le formulaire
-     return $this->render('NHPlatformBundle:Advert:add.html.twig');
+     return $this->render('NHPlatformBundle:Advert:ajout.html.twig');
  }*/
-
+    
     public function editAction($id, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
@@ -215,12 +225,17 @@ class AdvertController extends Controller
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
-        if ($request->isMethod('POST')) {
+        $form = $this->get('form.factory')->create(AdvertType::class, $advert);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $em->flush();
+
             $request->getSession()->getFlashBag()->add('notice', 'annonce modifiée');
             return $this->redirectToRoute('nh_platform_view', array('id' => $advert->getId()));
         }
         return $this->render('NHPlatformBundle:Advert:edit.html.twig', array(
-            'advert' => $advert
+            'advert' => $advert,
+            'form'   => $form->createView(),
         ));
 
 
@@ -255,7 +270,7 @@ class AdvertController extends Controller
         ));*/
     }
 
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -265,18 +280,21 @@ class AdvertController extends Controller
         if (null === $advert) {
             throw new NotFoundHttpException("l'annonce d'id ".$id." n'existe pas.");
         }
-        //on boucle sur les catégories de l'annonce pour les supprimer
-        foreach ($advert->getCategories() as $category) {
-            $advert->removeCategory($category);
+        // on crée un formulaire vide
+        $form = $this->get('form.factory')->create();
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $em->remove($advert);
+            $em->flush();
+
+            $request->getSession()->getFlashBag()->add('info', "annonce supprimée");
+            return $this->redirectToRoute('nh_platfom_home');
         }
-        //pour persister le changement dans la relation, il faut persister l'entité proprio
-        //avdert=propriétaire donc on ne la persiste pas
 
-        // on déclenche la modif
-        $em->flush();
-       return $this->render('NHPlatformBundle:Advert:delete.html.twig');
+       return $this->render('NHPlatformBundle:Advert:delete.html.twig', array(
+           'advert' => $advert,
+           'form'   => $form->createView(),
+       ));
     }
-
 
     public function menuAction($limit)
     {
@@ -285,7 +303,7 @@ class AdvertController extends Controller
             array(),                 // Pas de critère
             array('date' => 'desc'), // On trie par date décroissante
             $limit,                  // On sélectionne $limit annonces
-            0                // À partir du premier
+            0                       // À partir du premier
         );
         return $this->render('NHPlatformBundle:Advert:menu.html.twig', array(
             'listAdverts' => $listAdverts

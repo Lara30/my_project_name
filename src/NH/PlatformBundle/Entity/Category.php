@@ -2,12 +2,13 @@
 // src/NH/PlatformBundle/Entity/Category.php
 
 namespace NH\PlatformBundle\Entity;
+use NH\PlatformBundle\Repository\AdvertRepository;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="nh_category")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="NH\PlatformBundle\Repository\CategoryRepository")
  */
 
 class Category
