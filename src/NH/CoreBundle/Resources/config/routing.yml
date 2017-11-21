@@ -1,0 +1,9 @@
+nh_core_homepage:
+    path:     /
+    defaults:
+        _controller: NHCoreBundle:Core:index
+
+nh_core_contact:
+    path:    /contact
+    defaults:
+        _controller: NHCoreBundle:Core:contact

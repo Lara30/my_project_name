@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             //le générateur a généré la ligne suivante :
             new NH\PlatformBundle\NHPlatformBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new NH\CoreBundle\NHCoreBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

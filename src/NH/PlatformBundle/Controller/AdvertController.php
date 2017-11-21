@@ -35,13 +35,13 @@ class AdvertController extends Controller
     public function indexAction($page)
     {
         //comme on ne sait pas combien il y a de pages
-        if ($page < 1) {
+        if ($page < 0) {
            //on déclenche une exception qui va afficher une page d'erreur
             throw new NotFoundHttpException('page ".$page."inexistante.');
        }
         //il faut fixer le nombre d'annonce par page
 
-        $nbPerPage = 2;
+        $nbPerPage = 3;
         //pour récupérer la liste de toutes les annonces = findAll()
 
         //désormais on utilise getAdverts
@@ -61,7 +61,7 @@ class AdvertController extends Controller
         //on récupèrera la liste des annonces puis on la passera au template
         //on ne fait que l'appeler pour le moment
         //infos nécessaires à la vue
-        return $this->render('NHPlatformBundle:Advert:index.html.twig', array(
+        return $this->render('NHCoreBundle:Core:index.html.twig', array(
             'listAdverts' => $listAdverts,
             'nbPages'     => $nbPages,
             'page'        => $page,

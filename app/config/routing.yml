@@ -1,3 +1,7 @@
+nh_core:
+    resource: "@NHCoreBundle/Resources/config/routing.yml"
+    prefix:   /
+
 nh_platform:
     resource: "@NHPlatformBundle/Resources/config/routing.yml"
     prefix:   /

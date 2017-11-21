@@ -1,5 +1,5 @@
 <?php
-// src/nh/PlatformBundle/Repository/CategoryRepository.php
+// src/NH/PlatformBundle/Repository/CategoryRepository.php
 namespace NH\PlatformBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
